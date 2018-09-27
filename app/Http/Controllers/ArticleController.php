@@ -14,7 +14,7 @@ class ArticleController extends Controller
     public function index()
     {
         // Get Articles
-        $articles = Article::paginate(15);
+        $articles = Article::latest()->paginate(15);
 
         // Return collection of articles as a resource
         return ArticleResource::collection($articles);
@@ -24,11 +24,16 @@ class ArticleController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return ArticleResource
      */
     public function store(Request $request)
     {
+        $article = $request->isMethod('put') ? Article::findOrFail($request->id) : new Article();
 
+        $article->title = $request->input('title');
+        $article->body = $request->input('body');
+
+        return $article->save() ? new ArticleResource($article) : false;
     }
 
     /**
@@ -47,12 +52,14 @@ class ArticleController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return ArticleResource
      */
     public function destroy($id)
     {
-        //
+        // Get article
+        $article = Article::findOrFail($id);
+
+        return Article::findOrFail($id)->delete() ? new ArticleResource($article) : false;
     }
 }
