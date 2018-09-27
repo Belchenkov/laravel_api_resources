@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Article;
+use App\Http\Resources\ArticleResource;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        // Get Articles
+        $articles = Article::paginate(15);
+
+        // Return collection of articles as a resource
+        return ArticleResource::collection($articles);
     }
 
     /**
@@ -24,18 +28,21 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  int $id
+     * @return ArticleResource
      */
     public function show($id)
     {
-        //
+        // Get Single Artice
+        $article = Article::findOrFail($id);
+
+        // Return single article as a resource
+        return new ArticleResource($article);
     }
 
     /**
